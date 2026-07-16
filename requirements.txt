@@ -1,0 +1,24 @@
+# ============================================================
+# Enhanced MCNN Crowd Density Estimation Dashboard
+# Frontend Dependencies
+# ============================================================
+
+# Core Framework
+streamlit==1.45.1
+
+# Data & Visualization
+plotly==6.1.2
+pandas==2.3.0
+numpy==2.3.0
+
+# Image Processing (display only, no ML)
+Pillow==11.2.1
+opencv-python-headless==4.11.0.86
+
+# Streamlit UI Extensions
+streamlit-option-menu==0.4.0
+streamlit-extras==0.6.0
+streamlit-card==1.0.2
+
+# Utilities
+watchdog==6.0.0
