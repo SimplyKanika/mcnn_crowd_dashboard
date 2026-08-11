@@ -23,7 +23,7 @@ PROJECT_INFO = {
     "subtitle": "for Accurate Crowd Density Estimation with Adaptive Collation",
     "short_title": "Enhanced MCNN Crowd Density Estimation",
     "version": "v2.1.0",
-    "year": "2025-2026",
+    "year": "2026-2027",
     "department": "Artificial Intelligence and Data Science",
     "institution": "Thakur College of Engineering and Technology",
     "university": "University of Mumbai",
