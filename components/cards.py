@@ -206,29 +206,65 @@ def render_glass_card(content_html):
     )
 
 
-def render_timeline(steps):
+def render_timeline(steps, title="Model Execution Workflow", subtitle="Step-by-step pipeline from crowd image input to analytics delivery."):
     """
-    Render a workflow timeline from a list of step dicts.
+    Render a workflow timeline inside a glass card container.
 
     Args:
         steps: List of dicts with 'step', 'title', 'desc' keys.
+        title: Optional section title.
+        subtitle: Optional section subtitle.
     """
-    timeline_html = '<div class="timeline">'
+    timeline_items_html = ""
     for i, step in enumerate(steps):
         active_class = "active" if i == len(steps) - 1 else ""
-        timeline_html += f"""
-            <div class="timeline-item">
-                <div class="timeline-dot {active_class}"></div>
-                <div class="timeline-content">
-                    <div class="timeline-title">
-                        Step {step['step']}: {step['title']}
-                    </div>
-                    <div class="timeline-desc">{step['desc']}</div>
-                </div>
+        timeline_items_html += (
+            f'<div class="timeline-item">'
+            f'<div class="timeline-dot {active_class}"></div>'
+            f'<div class="timeline-content">'
+            f'<div class="timeline-title">Step {step["step"]}: {step["title"]}</div>'
+            f'<div class="timeline-desc">{step["desc"]}</div>'
+            f'</div>'
+            f'</div>'
+        )
+
+    card_html = (
+        f'<div class="glass-card" style="height: 100%;">'
+        f'<h3 class="gradient-text" style="margin-bottom: 0.5rem;">{title}</h3>'
+        f'<p style="font-size: 0.85rem; color: var(--text-tertiary); margin-bottom: 1.5rem;">{subtitle}</p>'
+        f'<div class="timeline">{timeline_items_html}</div>'
+        f'</div>'
+    )
+    st.markdown(card_html, unsafe_allow_html=True)
+
+
+def render_workflow_step_card(step_num, icon, title, desc, output_tag):
+    """
+    Render an elevated single workflow step card.
+
+    Args:
+        step_num: Step number (1, 2, ...).
+        icon: Emoji icon.
+        title: Step title.
+        desc: Step description.
+        output_tag: Output description pill text.
+    """
+    st.markdown(
+        f"""
+        <div class="glass-card-sm workflow-card" style="height: 100%; display: flex; flex-direction: column;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;">
+                <span class="workflow-step-num">STEP 0{step_num}</span>
+                <span style="font-size: 1.6rem;">{icon}</span>
             </div>
-        """
-    timeline_html += "</div>"
-    st.markdown(timeline_html, unsafe_allow_html=True)
+            <h4 style="font-size: 0.98rem; color: var(--text-primary); margin-bottom: 0.4rem; font-weight: 700;">{title}</h4>
+            <p style="font-size: 0.82rem; color: var(--text-tertiary); line-height: 1.5; flex: 1; margin-bottom: 0.8rem;">{desc}</p>
+            <div class="workflow-output-pill">
+                <span style="color: var(--primary-400); font-weight: 600;">Output:</span> {output_tag}
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 def render_badge(text, badge_type="purple"):

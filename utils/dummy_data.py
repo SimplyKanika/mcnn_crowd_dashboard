@@ -24,8 +24,8 @@ PROJECT_INFO = {
     "short_title": "Enhanced MCNN Crowd Density Estimation",
     "version": "v2.1.0",
     "year": "2025-2026",
-    "department": "Computer Engineering",
-    "institution": "XYZ College of Engineering",
+    "department": "Artificial Intelligence and Data Science",
+    "institution": "Thakur College of Engineering and Technology",
     "university": "University of Mumbai",
 }
 
@@ -215,39 +215,45 @@ FEATURES = [
 WORKFLOW_STEPS = [
     {
         "step": 1,
+        "icon": "📸",
         "title": "Image Acquisition",
-        "desc": "Capture or upload crowd images from cameras, drones, "
-                "or surveillance feeds.",
+        "desc": "Capture or upload crowd scene images from surveillance cameras, aerial drones, or static feeds.",
+        "output": "Raw Image Feed",
     },
     {
         "step": 2,
-        "title": "Preprocessing",
-        "desc": "Resize, normalize, and augment images for optimal "
-                "model input preparation.",
+        "icon": "⚙️",
+        "title": "Image Preprocessing",
+        "desc": "Resize, normalize pixel intensities, and perform adaptive contrast alignment for optimal tensor input.",
+        "output": "Normalized Tensor",
     },
     {
         "step": 3,
-        "title": "Multi-Column Feature Extraction",
-        "desc": "Process through 3 parallel CNN columns with 3×3, 5×5, "
-                "and 7×7 filters to capture multi-scale features.",
+        "icon": "🧠",
+        "title": "Multi-Column CNN Feature Extraction",
+        "desc": "Pass tensor through 3 parallel CNN branches (3×3, 5×5, 7×7 filters) to extract multi-scale features.",
+        "output": "Multi-Scale Features",
     },
     {
         "step": 4,
-        "title": "Adaptive Collation",
-        "desc": "Dynamically fuse column outputs using learned attention "
-                "weights for optimal feature combination.",
+        "icon": "🔗",
+        "title": "Adaptive Feature Collation",
+        "desc": "Dynamically fuse feature maps using learned spatial attention weights to handle perspective distortion.",
+        "output": "Fused Feature Map",
     },
     {
         "step": 5,
+        "icon": "🗺️",
         "title": "Density Map Generation",
-        "desc": "Generate pixel-level density map predicting crowd "
-                "distribution across the entire image.",
+        "desc": "Pass collated features through 1×1 conv layer to produce pixel-level continuous density map distribution.",
+        "output": "Pixel Density Map",
     },
     {
         "step": 6,
-        "title": "Crowd Count & Analysis",
-        "desc": "Integrate the density map to obtain total crowd count "
-                "and generate analytics insights.",
+        "icon": "📊",
+        "title": "Crowd Count & Analytics",
+        "desc": "Integrate density map matrix to calculate precise total crowd count and generate real-time KPI metrics.",
+        "output": "Total Count & KPIs",
     },
 ]
 
@@ -564,10 +570,10 @@ TEAM_MEMBERS = [
 ]
 
 GUIDE_INFO = {
-    "name": "Prof. [Guide Name]",
+    "name": "Dr. Anand Khandare",
     "role": "Project Guide",
     "avatar": "👨‍🏫",
-    "department": "Department of Computer Engineering",
+    "department": "Department of Artificial Intelligence and Data Science",
     "institution": PROJECT_INFO["institution"],
 }
 
@@ -576,21 +582,21 @@ GUIDE_INFO = {
 # 11. ABOUT PAGE DATA
 # ============================================================
 
-EXPECTED_OUTCOMES = [
-    "An Enhanced MCNN model achieving MAE < 65 on ShanghaiTech Part A dataset.",
-    "High-quality density maps with PSNR > 25 dB.",
-    "Real-time inference capability at 120+ FPS on GPU hardware.",
-    "A user-friendly web dashboard for crowd density visualization.",
-    "Comprehensive evaluation against CSRNet, SANet, and MCNN baselines.",
-]
+# EXPECTED_OUTCOMES = [
+#     "An Enhanced MCNN model achieving MAE < 65 on ShanghaiTech Part A dataset.",
+#     "High-quality density maps with PSNR > 25 dB.",
+#     "Real-time inference capability at 120+ FPS on GPU hardware.",
+#     "A user-friendly web dashboard for crowd density visualization.",
+#     "Comprehensive evaluation against CSRNet, SANet, and MCNN baselines.",
+# ]
 
-FUTURE_SCOPE = [
-    "Integration with live video surveillance systems for real-time monitoring.",
-    "Deployment on edge computing devices (NVIDIA Jetson, Raspberry Pi).",
-    "Extension to 3D crowd density estimation using depth information.",
-    "Multi-camera crowd counting for large-scale venue management.",
-    "Transfer learning for domain-specific crowd types (vehicles, wildlife).",
-]
+# FUTURE_SCOPE = [
+#     "Integration with live video surveillance systems for real-time monitoring.",
+#     "Deployment on edge computing devices (NVIDIA Jetson, Raspberry Pi).",
+#     "Extension to 3D crowd density estimation using depth information.",
+#     "Multi-camera crowd counting for large-scale venue management.",
+#     "Transfer learning for domain-specific crowd types (vehicles, wildlife).",
+# ]
 
 PROJECT_FEATURES = [
     {"icon": "📤", "title": "Image Upload", "desc": "Drag-and-drop crowd image upload"},
@@ -618,7 +624,7 @@ REFERENCES = [
 ACKNOWLEDGEMENTS = (
     "We express our sincere gratitude to our project guide for their invaluable "
     "guidance and constant encouragement throughout this project. We also thank "
-    "the Department of Computer Engineering and our institution for providing the "
+    "the Department of Artificial Intelligence and Data Science and our institution for providing the "
     "necessary resources and infrastructure. Special thanks to the authors of the "
     "ShanghaiTech and UCF_CC_50 datasets for making their data publicly available "
     "for research purposes."

@@ -5,9 +5,13 @@ secondaryBackgroundColor = "#1A1A2E"
 textColor = "#E2E8F0"
 font = "sans serif"
 
+[client]
+showSidebarNavigation = false
+
 [server]
 headless = true
 port = 8501
 
 [browser]
 gatherUsageStats = false
+

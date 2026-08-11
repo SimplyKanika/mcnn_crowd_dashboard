@@ -219,17 +219,18 @@ def render_model_details_page():
         unsafe_allow_html=True,
     )
 
-    future_col1, future_col2, future_col3 = st.columns(3)
-    for i, fut in enumerate(FUTURE_IMPROVEMENTS):
-        current_col = [future_col1, future_col2, future_col3][i % 3]
-        with current_col:
-            st.markdown(
-                f"""
-                <div class="glass-card-sm" style="margin-bottom: 1rem; height: calc(100% - 1rem);">
-                    <div style="font-size: 1.8rem; margin-bottom: 0.5rem;">{fut['icon']}</div>
-                    <h4 style="color: var(--text-primary); margin-bottom: 0.4rem;">{fut['title']}</h4>
-                    <p style="font-size: 0.82rem; color: var(--text-tertiary); line-height: 1.5;">{fut['desc']}</p>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
+    for row_idx in range(0, len(FUTURE_IMPROVEMENTS), 3):
+        row_futs = FUTURE_IMPROVEMENTS[row_idx:row_idx + 3]
+        cols = st.columns(len(row_futs))
+        for col, fut in zip(cols, row_futs):
+            with col:
+                st.markdown(
+                    f"""
+                    <div class="glass-card-sm" style="margin-bottom: 1rem; height: 100%; display: flex; flex-direction: column;">
+                        <div style="font-size: 1.8rem; margin-bottom: 0.5rem;">{fut['icon']}</div>
+                        <h4 style="color: var(--text-primary); margin-bottom: 0.4rem;">{fut['title']}</h4>
+                        <p style="font-size: 0.82rem; color: var(--text-tertiary); line-height: 1.5; flex: 1;">{fut['desc']}</p>
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )

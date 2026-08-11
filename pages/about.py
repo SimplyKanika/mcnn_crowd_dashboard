@@ -13,8 +13,8 @@ from utils.dummy_data import (
     PROJECT_INFO,
     PROBLEM_STATEMENT,
     METHODOLOGY,
-    EXPECTED_OUTCOMES,
-    FUTURE_SCOPE,
+    # EXPECTED_OUTCOMES,
+    # FUTURE_SCOPE,
     PROJECT_FEATURES,
     TEAM_MEMBERS,
     GUIDE_INFO,
@@ -98,51 +98,52 @@ def render_about_page():
         unsafe_allow_html=True,
     )
 
-    feat_col1, feat_col2, feat_col3, feat_col4 = st.columns(4)
-    for i, feat in enumerate(PROJECT_FEATURES):
-        current_col = [feat_col1, feat_col2, feat_col3, feat_col4][i % 4]
-        with current_col:
-            st.markdown(
-                f"""
-                <div class="glass-card-sm" style="margin-bottom: 1rem; text-align: center; height: calc(100% - 1rem);">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">{feat['icon']}</div>
-                    <div style="font-weight: 600; font-size: 0.9rem; color: var(--text-primary);">{feat['title']}</div>
-                    <div style="font-size: 0.78rem; color: var(--text-tertiary); margin-top: 0.3rem;">{feat['desc']}</div>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
+    for row_idx in range(0, len(PROJECT_FEATURES), 4):
+        row_feats = PROJECT_FEATURES[row_idx:row_idx + 4]
+        cols = st.columns(len(row_feats))
+        for col, feat in zip(cols, row_feats):
+            with col:
+                st.markdown(
+                    f"""
+                    <div class="glass-card-sm" style="margin-bottom: 1rem; text-align: center; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">{feat['icon']}</div>
+                        <div style="font-weight: 600; font-size: 0.9rem; color: var(--text-primary);">{feat['title']}</div>
+                        <div style="font-size: 0.78rem; color: var(--text-tertiary); margin-top: 0.3rem;">{feat['desc']}</div>
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
 
     render_section_separator()
 
-    # ── Section 4: Expected Outcomes & Scope ──
-    col_outcomes, col_scope = st.columns(2)
+    # # ── Section 4: Expected Outcomes & Scope ──
+    # col_outcomes, col_scope = st.columns(2)
 
-    with col_outcomes:
-        st.markdown("<h3 style='margin-bottom: 1rem;'>🎯 Expected Outcomes</h3>", unsafe_allow_html=True)
-        outcomes_html = ""
-        for out in EXPECTED_OUTCOMES:
-            outcomes_html += f"""
-            <div style="display: flex; gap: 0.6rem; align-items: start; margin-bottom: 0.8rem;">
-                <span style="color: var(--accent-emerald); font-weight: bold;">✔</span>
-                <span style="font-size: 0.9rem; color: var(--text-secondary);">{out}</span>
-            </div>
-            """
-        st.markdown(f'<div class="glass-card" style="height: calc(100% - 1rem);">{outcomes_html}</div>', unsafe_allow_html=True)
+    # with col_outcomes:
+    #     st.markdown("<h3 style='margin-bottom: 1rem;'>🎯 Expected Outcomes</h3>", unsafe_allow_html=True)
+    #     outcomes_html = ""
+    #     for out in EXPECTED_OUTCOMES:
+    #         outcomes_html += f"""
+    #         <div style="display: flex; gap: 0.6rem; align-items: start; margin-bottom: 0.8rem;">
+    #             <span style="color: var(--accent-emerald); font-weight: bold;">✔</span>
+    #             <span style="font-size: 0.9rem; color: var(--text-secondary);">{out}</span>
+    #         </div>
+    #         """
+    #     st.markdown(f'<div class="glass-card" style="height: calc(100% - 1rem);">{outcomes_html}</div>', unsafe_allow_html=True)
 
-    with col_scope:
-        st.markdown("<h3 style='margin-bottom: 1rem;'>🚀 Future Scope</h3>", unsafe_allow_html=True)
-        scope_html = ""
-        for sc in FUTURE_SCOPE:
-            scope_html += f"""
-            <div style="display: flex; gap: 0.6rem; align-items: start; margin-bottom: 0.8rem;">
-                <span style="color: var(--primary-400); font-weight: bold;">➔</span>
-                <span style="font-size: 0.9rem; color: var(--text-secondary);">{sc}</span>
-            </div>
-            """
-        st.markdown(f'<div class="glass-card" style="height: calc(100% - 1rem);">{scope_html}</div>', unsafe_allow_html=True)
+    # with col_scope:
+    #     st.markdown("<h3 style='margin-bottom: 1rem;'>🚀 Future Scope</h3>", unsafe_allow_html=True)
+    #     scope_html = ""
+    #     for sc in FUTURE_SCOPE:
+    #         scope_html += f"""
+    #         <div style="display: flex; gap: 0.6rem; align-items: start; margin-bottom: 0.8rem;">
+    #             <span style="color: var(--primary-400); font-weight: bold;">➔</span>
+    #             <span style="font-size: 0.9rem; color: var(--text-secondary);">{sc}</span>
+    #         </div>
+    #         """
+    #     st.markdown(f'<div class="glass-card" style="height: calc(100% - 1rem);">{scope_html}</div>', unsafe_allow_html=True)
 
-    render_section_separator()
+    # render_section_separator()
 
     # ── Section 5: Team Members & Guide ──
     st.markdown(
@@ -209,13 +210,20 @@ def render_about_page():
         st.markdown("<h3 style='margin-bottom: 1rem;'>📚 References</h3>", unsafe_allow_html=True)
         refs_html = ""
         for i, ref in enumerate(REFERENCES):
-            refs_html += f"""
-            <div style="display: flex; gap: 0.6rem; align-items: start; margin-bottom: 0.8rem; font-size: 0.85rem;">
-                <span style="color: var(--primary-300); font-family: monospace;">[{i+1}]</span>
-                <span style="color: var(--text-secondary); line-height: 1.5;">{ref}</span>
-            </div>
-            """
-        st.markdown(f'<div class="glass-card" style="height: calc(100% - 1rem);">{refs_html}</div>', unsafe_allow_html=True)
+            refs_html += (
+                f'<div style="display:flex; gap:0.6rem; align-items:flex-start; '
+                f'margin-bottom:0.8rem; font-size:0.85rem;">'
+                f'<span style="color:var(--primary-300); font-family:monospace;">[{i+1}]</span>'
+                f'<span style="color:var(--text-secondary); line-height:1.5;">{ref}</span>'
+                f'</div>'
+            )
+
+        st.markdown(
+            f'<div class="glass-card" style="height:calc(100% - 1rem);">'
+            f'{refs_html}'
+            f'</div>',
+            unsafe_allow_html=True,
+        )
 
     render_section_separator()
 

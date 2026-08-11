@@ -12,21 +12,18 @@ import streamlit as st
 import os
 import base64
 from utils.dummy_data import (
-    PROJECT_INFO,
     PROJECT_OVERVIEW,
     RESEARCH_MOTIVATION,
     HERO_STATS,
     OBJECTIVES,
     TECH_STACK,
     FEATURES,
-    WORKFLOW_STEPS,
 )
 from components.navbar import render_page_header
 from components.cards import (
     render_metric_card,
     render_feature_card,
     render_tech_card,
-    render_timeline,
 )
 
 
@@ -126,20 +123,22 @@ def render_home_page():
         unsafe_allow_html=True,
     )
 
-    obj_col1, obj_col2, obj_col3 = st.columns(3)
-    for i, obj in enumerate(OBJECTIVES):
-        current_col = [obj_col1, obj_col2, obj_col3][i % 3]
-        with current_col:
-            st.markdown(
-                f"""
-                <div class="glass-card-sm" style="margin-bottom: 1rem; height: calc(100% - 1rem);">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">{obj['icon']}</div>
-                    <h4 style="color: var(--text-primary); margin-bottom: 0.5rem;">{obj['title']}</h4>
-                    <p style="font-size: 0.85rem; color: var(--text-tertiary); line-height: 1.5;">{obj['desc']}</p>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
+    # Render Objectives in rows of 3 for perfect grid alignment
+    for row_idx in range(0, len(OBJECTIVES), 3):
+        row_objs = OBJECTIVES[row_idx:row_idx + 3]
+        cols = st.columns(len(row_objs))
+        for col, obj in zip(cols, row_objs):
+            with col:
+                st.markdown(
+                    f"""
+                    <div class="glass-card-sm" style="margin-bottom: 1rem; height: 100%; display: flex; flex-direction: column;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">{obj['icon']}</div>
+                        <h4 style="color: var(--text-primary); margin-bottom: 0.5rem;">{obj['title']}</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-tertiary); line-height: 1.5; flex: 1;">{obj['desc']}</p>
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
 
     st.markdown("<div class='section-separator'></div>", unsafe_allow_html=True)
 
@@ -155,44 +154,35 @@ def render_home_page():
         unsafe_allow_html=True,
     )
 
-    feat_col1, feat_col2, feat_col3 = st.columns(3)
-    for i, feat in enumerate(FEATURES):
-        current_col = [feat_col1, feat_col2, feat_col3][i % 3]
-        with current_col:
-            render_feature_card(feat["icon"], feat["title"], feat["desc"])
+    # Render Features in rows of 3 for perfect grid alignment
+    for row_idx in range(0, len(FEATURES), 3):
+        row_feats = FEATURES[row_idx:row_idx + 3]
+        cols = st.columns(len(row_feats))
+        for col, feat in zip(cols, row_feats):
+            with col:
+                render_feature_card(feat["icon"], feat["title"], feat["desc"])
 
     st.markdown("<div class='section-separator'></div>", unsafe_allow_html=True)
 
-    # ── Workflow Timeline & Tech Stack (Side by Side) ──
-    col_flow, col_tech = st.columns([3, 2])
-    with col_flow:
-        st.markdown(
-            """
-            <div class="glass-card" style="height: 100%;">
-                <h3 class="gradient-text" style="margin-bottom: 1rem;">Model Execution Workflow</h3>
-                <p style="font-size: 0.85rem; color: var(--text-tertiary); margin-bottom: 1.5rem;">
-                    Step-by-step pipeline from crowd image input to analytics delivery.
-                </p>
-            """,
-            unsafe_allow_html=True,
-        )
-        render_timeline(WORKFLOW_STEPS)
-        st.markdown("</div>", unsafe_allow_html=True)
+    # ── Technology Stack Section ──
+    st.markdown(
+        """
+        <div class="section-header">
+            <span class="section-badge">Architecture Stack</span>
+            <h2 class="section-title">Technologies & Frameworks</h2>
+            <p class="section-subtitle">Built with modern deep learning frameworks, image processing tools, and web rendering libraries</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
-    with col_tech:
-        st.markdown(
-            """
-            <div class="glass-card" style="height: 100%;">
-                <h3 class="gradient-text" style="margin-bottom: 1.5rem;">Technology Stack</h3>
-            """,
-            unsafe_allow_html=True,
-        )
-        tech_col1, tech_col2 = st.columns(2)
-        for i, tech in enumerate(TECH_STACK):
-            current_col = tech_col1 if i % 2 == 0 else tech_col2
-            with current_col:
+    # Render Tech Stack in rows of 4 columns
+    for row_idx in range(0, len(TECH_STACK), 4):
+        row_techs = TECH_STACK[row_idx:row_idx + 4]
+        cols = st.columns(len(row_techs))
+        for col, tech in zip(cols, row_techs):
+            with col:
                 render_tech_card(tech["icon"], tech["name"], tech["desc"])
-        st.markdown("</div>", unsafe_allow_html=True)
 
     st.markdown("<div class='section-separator'></div>", unsafe_allow_html=True)
 

@@ -44,16 +44,14 @@ def render_sidebar():
             unsafe_allow_html=True,
         )
 
-        # ── Navigation Menu ──
+        # Compute default index — respect footer nav overrides
+        _pages = ["Home", "Prediction", "Analytics", "Model Details", "About"]
+        _nav_target = st.session_state.get("_footer_nav_target", None)
+        _default_idx = _pages.index(_nav_target) if _nav_target in _pages else 0
+
         selected = option_menu(
             menu_title=None,
-            options=[
-                "Home",
-                "Prediction",
-                "Analytics",
-                "Model Details",
-                "About",
-            ],
+            options=_pages,
             icons=[
                 "house-fill",
                 "cpu-fill",
@@ -61,7 +59,7 @@ def render_sidebar():
                 "diagram-3-fill",
                 "info-circle-fill",
             ],
-            default_index=0,
+            default_index=_default_idx,
             styles={
                 "container": {
                     "padding": "0.5rem 0",
@@ -100,9 +98,6 @@ def render_sidebar():
             <div style="text-align: center; padding: 0.5rem;">
                 <span class="version-tag">v2.1.0</span>
                 <p style="font-size: 0.7rem; color: #475569; margin-top: 0.5rem;">
-                    Final Year Project 2025-26
-                </p>
-                <p style="font-size: 0.65rem; color: #334155; margin-top: 0.2rem;">
                     © CrowdVision AI
                 </p>
             </div>

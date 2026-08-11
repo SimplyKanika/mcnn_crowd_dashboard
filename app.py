@@ -54,6 +54,10 @@ def main():
     from components.sidebar import render_sidebar
     selected_page = render_sidebar()
 
+    # 2b. If a footer nav button was clicked, override the selection
+    if "_footer_nav_target" in st.session_state:
+        selected_page = st.session_state.pop("_footer_nav_target")
+
     # 3. Render top navbar
     from components.navbar import render_navbar
     render_navbar()
