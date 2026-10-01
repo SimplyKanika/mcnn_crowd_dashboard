@@ -311,72 +311,181 @@ def render_scatter_plot(df, x, y, title="", height=400):
     st.plotly_chart(fig, use_container_width=True)
 
 
+
+
+# def _create_visible_heatmap(data, palette):
+#     """
+#     Create a visually enhanced heatmap from the MCNN density output.
+
+#     IMPORTANT:
+#     This transformation is for visualization only.
+#     The original density values and crowd count are never modified.
+#     """
+#     from PIL import Image, ImageFilter
+
+#     arr = np.asarray(data, dtype=np.float32)
+#     arr = np.nan_to_num(arr, nan=0.0, posinf=0.0, neginf=0.0)
+#     arr = np.maximum(arr, 0.0)
+
+#     # Compress the extremely large dynamic range.
+#     arr = np.sqrt(arr)
+
+#     # Normalize using the strongest density regions.
+#     high = float(arr.max())
+
+#     if high > 0:
+#         arr = np.clip(arr / high, 0.0, 1.0)
+#     else:
+#         arr = np.zeros_like(arr)
+
+#     # Convert to grayscale for controlled smoothing.
+#     gray = (arr * 255.0).astype(np.uint8)
+#     image = Image.fromarray(gray, mode="L")
+
+#     # Spread sparse point detections into visible crowd regions.
+#     image = image.filter(ImageFilter.GaussianBlur(radius=3.0))
+
+#     arr = np.asarray(image, dtype=np.float32) / 255.0
+
+#     # Re-normalize after smoothing.
+#     if arr.max() > 0:
+#         arr = arr / arr.max()
+
+#     stops = np.linspace(0.0, 1.0, len(palette))
+#     palette = np.asarray(palette, dtype=np.float32)
+
+#     rgb = np.zeros((*arr.shape, 3), dtype=np.float32)
+
+#     for channel in range(3):
+#         rgb[..., channel] = np.interp(
+#             arr,
+#             stops,
+#             palette[:, channel]
+#         )
+
+#     rgb = np.clip(rgb * 255.0, 0, 255).astype(np.uint8)
+
+#     return Image.fromarray(rgb, mode="RGB")
+
+def _create_visible_heatmap(data, palette):
+    """
+    Create a clearly visible heatmap from the MCNN density output.
+
+    Visualization only:
+    - Does not modify the original density map.
+    - Does not modify the predicted crowd count.
+    """
+
+    from PIL import Image, ImageFilter
+
+    arr = np.asarray(data, dtype=np.float32)
+    arr = np.nan_to_num(arr, nan=0.0, posinf=0.0, neginf=0.0)
+    arr = np.maximum(arr, 0.0)
+
+    # If there is no density, return a completely black image.
+    if arr.max() <= 0:
+        return Image.fromarray(
+            np.zeros((*arr.shape, 3), dtype=np.uint8),
+            mode="RGB"
+        )
+
+    # ---------------------------------------------------------
+    # 1. Focus normalization on NON-ZERO density values.
+    # ---------------------------------------------------------
+    nonzero = arr[arr > 0]
+
+    if nonzero.size > 0:
+        low = float(np.percentile(nonzero, 5))
+        high = float(np.percentile(nonzero, 99))
+
+        if high <= low:
+            high = float(nonzero.max())
+
+        arr = np.clip((arr - low) / max(high - low, 1e-8), 0.0, 1.0)
+
+    # ---------------------------------------------------------
+    # 2. Gamma correction makes weak density regions visible.
+    # ---------------------------------------------------------
+    arr = np.power(arr, 0.55)
+
+    # ---------------------------------------------------------
+    # 3. Smooth the sparse MCNN response.
+    # ---------------------------------------------------------
+    gray = (arr * 255.0).astype(np.uint8)
+
+    image = Image.fromarray(gray, mode="L")
+    image = image.filter(ImageFilter.GaussianBlur(radius=4.0))
+
+    arr = np.asarray(image, dtype=np.float32) / 255.0
+
+    # Normalize again after blur.
+    if arr.max() > 0:
+        arr = arr / arr.max()
+
+    # ---------------------------------------------------------
+    # 4. Convert normalized density to RGB heatmap.
+    # ---------------------------------------------------------
+    stops = np.linspace(0.0, 1.0, len(palette))
+    palette = np.asarray(palette, dtype=np.float32)
+
+    rgb = np.zeros((*arr.shape, 3), dtype=np.float32)
+
+    for channel in range(3):
+        rgb[..., channel] = np.interp(
+            arr,
+            stops,
+            palette[:, channel]
+        )
+
+    rgb = np.clip(rgb * 255.0, 0, 255).astype(np.uint8)
+
+    return Image.fromarray(rgb, mode="RGB")
+
+
 def render_density_map_plotly(density_array, title="Density Map"):
     """
-    Render a density map array as a Plotly heatmap.
-
-    Args:
-        density_array: 2D numpy array of density values.
-        title: Chart title.
+    Render the real MCNN density map as a rasterized heatmap.
+    Visualization only — original density values are unchanged.
     """
-    fig = go.Figure()
-    fig.add_trace(go.Heatmap(
-        z=density_array,
-        colorscale=[
-            [0.0, "#0F0F1A"],
-            [0.2, "#1A1A2E"],
-            [0.4, "#5B21B6"],
-            [0.6, "#7C3AED"],
-            [0.8, "#A78BFA"],
-            [1.0, "#DDD6FE"],
-        ],
-        showscale=True,
-        colorbar=dict(
-            tickfont=dict(color="#94A3B8"),
-            title=dict(text="Density", font=dict(color="#94A3B8")),
-        ),
-        hovertemplate="X: %{x}<br>Y: %{y}<br>Density: %{z:.3f}<extra></extra>",
-    ))
-    fig = _apply_layout(fig, title, 350)
-    fig.update_layout(
-        xaxis=dict(showticklabels=False, showgrid=False),
-        yaxis=dict(showticklabels=False, showgrid=False, autorange="reversed"),
+    palette = [
+        (0.03, 0.03, 0.08),
+        (0.10, 0.06, 0.25),
+        (0.25, 0.08, 0.55),
+        (0.48, 0.15, 0.85),
+        (0.70, 0.45, 1.00),
+        (1.00, 0.95, 1.00),
+    ]
+
+    image = _create_visible_heatmap(density_array, palette)
+
+    st.image(
+        image,
+        caption=title,
+        use_container_width=True
     )
-    st.plotly_chart(fig, use_container_width=True)
 
 
 def render_heatmap_overlay_plotly(heatmap_array, title="Heatmap Overlay"):
     """
-    Render a heatmap overlay array as a Plotly heatmap.
-
-    Args:
-        heatmap_array: 2D numpy array of heatmap values.
-        title: Chart title.
+    Render the real MCNN density output as a visible intensity heatmap.
+    Visualization only — original density values are unchanged.
     """
-    fig = go.Figure()
-    fig.add_trace(go.Heatmap(
-        z=heatmap_array,
-        colorscale=[
-            [0.0, "#0F0F1A"],
-            [0.2, "#16213E"],
-            [0.4, "#10B981"],
-            [0.6, "#F59E0B"],
-            [0.8, "#F43F5E"],
-            [1.0, "#FF0000"],
-        ],
-        showscale=True,
-        colorbar=dict(
-            tickfont=dict(color="#94A3B8"),
-            title=dict(text="Intensity", font=dict(color="#94A3B8")),
-        ),
-        hovertemplate="X: %{x}<br>Y: %{y}<br>Intensity: %{z:.3f}<extra></extra>",
-    ))
-    fig = _apply_layout(fig, title, 350)
-    fig.update_layout(
-        xaxis=dict(showticklabels=False, showgrid=False),
-        yaxis=dict(showticklabels=False, showgrid=False, autorange="reversed"),
+    palette = [
+        (0.00, 0.05, 0.03),
+        (0.00, 0.30, 0.20),
+        (0.05, 0.75, 0.45),
+        (1.00, 0.75, 0.00),
+        (1.00, 0.25, 0.05),
+        (1.00, 0.00, 0.00),
+    ]
+
+    image = _create_visible_heatmap(heatmap_array, palette)
+
+    st.image(
+        image,
+        caption=title,
+        use_container_width=True
     )
-    st.plotly_chart(fig, use_container_width=True)
 
 
 def _hex_to_rgb(hex_color):

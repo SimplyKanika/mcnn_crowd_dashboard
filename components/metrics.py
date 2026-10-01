@@ -95,7 +95,7 @@ def render_prediction_metrics(results):
     Args:
         results: Dict from get_prediction_results() in dummy_data.
     """
-    col1, col2, col3, col4 = st.columns(4)
+    col1, col2, col3 = st.columns(3)
 
     with col1:
         render_metric_card(
@@ -107,21 +107,13 @@ def render_prediction_metrics(results):
 
     with col2:
         render_metric_card(
-            icon="🎯",
-            value=f"{results['confidence']}%",
-            label="Confidence",
-            color="emerald",
-        )
-
-    with col3:
-        render_metric_card(
             icon="⚡",
             value=f"{results['inference_time']}s",
             label="Inference Time",
             color="blue",
         )
 
-    with col4:
+    with col3:
         render_metric_card(
             icon="📊",
             value=results["density_level"],

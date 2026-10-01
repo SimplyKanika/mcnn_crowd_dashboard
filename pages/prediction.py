@@ -11,15 +11,9 @@ estimated metrics.
 """
 
 import streamlit as st
-import time
 from PIL import Image
-import numpy as np
-from utils.dummy_data import (
-    PROCESSING_STEPS,
-    get_prediction_results,
-    generate_dummy_density_map,
-    generate_dummy_heatmap,
-)
+from ml.inference import predict
+from utils.dummy_data import PROCESSING_STEPS
 from components.navbar import render_page_header
 from components.cards import (
     render_density_badge,
@@ -107,7 +101,6 @@ def render_prediction_page():
                         )
                         
                         # Simulate step work
-                        time.sleep(step["duration"])
                         
                         # Update progress
                         progress_bar.progress(int((i + 1) / total_steps * 100))
@@ -117,7 +110,7 @@ def render_prediction_page():
                     progress_bar.empty()
                     
                     # Set results
-                    st.session_state.prediction_results = get_prediction_results()
+                    st.session_state.prediction_results = predict(image)
                     st.session_state.prediction_done = True
                     st.success("✅ Crowd density estimation completed successfully!")
                     st.rerun()
@@ -184,7 +177,7 @@ def render_prediction_page():
                     unsafe_allow_html=True,
                 )
                 # Generate and render density map
-                density_map = generate_dummy_density_map()
+                density_map = results["density_map"]
                 render_density_map_plotly(density_map, title="")
 
             with col_heat:
@@ -197,7 +190,7 @@ def render_prediction_page():
                     unsafe_allow_html=True,
                 )
                 # Generate and render heatmap
-                heatmap = generate_dummy_heatmap()
+                heatmap = results["density_map"]
                 render_heatmap_overlay_plotly(heatmap, title="")
 
             st.markdown("<div style='height: 1.5rem;'></div>", unsafe_allow_html=True)

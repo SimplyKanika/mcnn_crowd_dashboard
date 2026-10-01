@@ -1,0 +1,45 @@
+# Dataset
+data/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Streamlit
+.streamlit/secrets.toml
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.bak
+
+# Frontend build/dependencies
+frontend/mcnn_crowd_dashboard-main/node_modules/
+frontend/mcnn_crowd_dashboard-main/.venv/
+
+# Model checkpoints - handled separately
+checkpoints/*.pth
+ShanghaiTech_Crowd_Counting_Dataset.zip
+
+# Local integration backup
+crowd-estimation-mcnn-backup/
+
+# Python cache anywhere
+**/__pycache__/

@@ -22,3 +22,6 @@ streamlit-card==1.0.2
 
 # Utilities
 watchdog==6.0.0
+
+torch==2.8.0
+torchvision==0.23.0
