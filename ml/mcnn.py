@@ -54,5 +54,6 @@ class MCNN(nn.Module):
         )
         collated_features, attention_weights = self.acm(column_outputs)
         density_map = self.regressor(collated_features)
+        density_map = F.interpolate(density_map, size=x.shape[-2:], mode="bilinear", align_corners=False)
         density_map = F.relu(density_map)
         return density_map, attention_weights
