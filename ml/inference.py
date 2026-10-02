@@ -142,7 +142,42 @@ def predict(image: Image.Image):
 
     inference_time = time.perf_counter() - start_time
 
-    crowd_count = float(density_map.sum().item())
+    # crowd_count = float(density_map.sum().item())
+
+    # if crowd_count < 50:
+    #     density_level = "Low"
+    # elif crowd_count < 150:
+    #     density_level = "Medium"
+    # elif crowd_count < 300:
+    #     density_level = "High"
+    # else:
+    #     density_level = "Very High"
+
+    # attention = attention_weights[0].detach().cpu().numpy()
+
+    # density_map_np = density_map[0, 0].detach().cpu().numpy()
+   # The trained MCNN checkpoint outputs a 512x512 density map.
+    # Use the raw density map directly for the crowd count.
+    density_map_np = density_map[0, 0].detach().cpu().numpy()
+
+    crowd_count = float(density_map_np.sum())
+
+    attention = attention_weights[0].detach().cpu().numpy()
+
+    # Normalize ONLY for visualization, matching the dashboard's
+    # dummy density-map structure. The raw density values are
+    # never modified for counting.
+    max_density = float(density_map_np.max())
+
+    if max_density > 0:
+        density_map_np = (
+            density_map_np / max_density
+        ).astype(np.float32)
+    else:
+        density_map_np = np.zeros_like(
+            density_map_np,
+            dtype=np.float32,
+        )
 
     if crowd_count < 50:
         density_level = "Low"
@@ -152,10 +187,6 @@ def predict(image: Image.Image):
         density_level = "High"
     else:
         density_level = "Very High"
-
-    attention = attention_weights[0].detach().cpu().numpy()
-
-    density_map_np = density_map[0, 0].detach().cpu().numpy()
 
     return {
         "crowd_count": max(0, round(crowd_count)),

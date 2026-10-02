@@ -68,7 +68,20 @@ def train(args: argparse.Namespace) -> None:
             targets = targets.to(device)
             optimizer.zero_grad()
             predictions, _ = model(images)
-            density_loss = F.mse_loss(predictions, targets)
+            
+            targets_64 = F.interpolate(
+                targets,
+                size=predictions.shape[-2:],
+                mode="bilinear",
+                align_corners=False,
+            )
+
+            scale_y = targets.shape[-2] / predictions.shape[-2]
+            scale_x = targets.shape[-1] / predictions.shape[-1]
+            targets_64 = targets_64 * (scale_y * scale_x)
+
+
+            density_loss = F.mse_loss(predictions, targets_64)
             target_counts = targets.sum(dim=(1, 2, 3))
             pred_counts = predictions.sum(dim=(1, 2, 3))
             count_loss = F.l1_loss(pred_counts, target_counts)
